@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="si">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Results - Uva Province Special Education Sports Meet</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100 min-h-screen p-6">
+    <div class="max-w-2xl mx-auto bg-white rounded-lg shadow-md p-6">
+        <h1 id="eventTitle" class="text-2xl font-bold text-center text-blue-600 mb-6">ඉවෙන්ට් ප්‍රතිඵලය</h1>
+        
+        <div id="resultDetails" class="space-y-4">
+            <!-- මෙතැනට අදාළ ඉවෙන්ට් එකේ ප්‍රතිඵල වැටේ -->
+            <p class="text-center text-gray-500">ප්‍රතිඵල ಲೋඩ් වෙමින් පවතී...</p>
+        </div>
+
+        <div class="mt-6 text-center">
+            <a href="index.html" class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">මුල් පිටුවට යන්න</a>
+        </div>
+    </div>
+
+    <script>
+        // URL එකෙන් Event නම ලබා ගැනීම (උදා: event.html?name=100m)
+        const urlParams = new URLSearchParams(window.location.search);
+        const eventName = urlParams.get('name');
+
+        if (eventName) {
+            document.getElementById('eventTitle').innerText = eventName + " - ප්‍රතිඵල";
+            
+            // API එකෙන් දත්ත ලබා ගැනීම
+            fetch('/.netlify/functions/api?action=get_results')
+                .then(res => res.json())
+                .then(data => {
+                    const container = document.getElementById('resultDetails');
+                    // අදාළ ඉවෙන්ට් එකට අදාළ දත්ත ෆිල්ටර් කර පෙන්වීම
+                    const eventResult = data[eventName]; // හෝ ඔබේ ඩේටා სტრუქචර් එක අනුව
+                    
+                    if (eventResult) {
+                        container.innerHTML = `
+                            <div class="p-4 bg-green-50 border border-green-200 rounded">
+                                <p><strong>ප්‍රථම ස්ථානය:</strong> ${eventResult.1st || '-'}</p>
+                                <p><strong>දෙවන ස්ථානය:</strong> ${eventResult.2nd || '-'}</p>
+                                <p><strong>තෙවන ස්ථානය:</strong> ${eventResult.3rd || '-'}</p>
+                            </div>
+                        `;
+                    } else {
+                        container.innerHTML = `<p class="text-center text-red-500">මෙම ඉවෙන්ට් එක සඳහා තවම ප්‍රතිඵල ඇතුළත් කර නැත.</p>`;
+                    }
+                })
+                .catch(err => {
+                    document.getElementById('resultDetails').innerHTML = `<p class="text-center text-red-500">දත්ත ලබාගැනීමේ දෝෂයක් සිදු විය.</p>`;
+                });
+        } else {
+            document.getElementById('eventTitle').innerText = "ඉවෙන්ට් එකක් තෝරා නැත";
+        }
+    </script>
+</body>
+</html>
