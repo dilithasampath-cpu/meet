@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="si"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>ප්‍රතිඵල ඇතුළත් කිරීම</title>
+<style>
+:root{--red:#b3121a;--gold:#ffc72c;--line:#d9d9d9;color-scheme:light}
+*{box-sizing:border-box}
+html{background:#fff}
+body{margin:0 auto;background:#fff;color:#000;font-family:system-ui,"Noto Sans Sinhala","Iskoola Pota",sans-serif;font-size:18px;font-weight:700;padding:14px;max-width:820px}
+h1{font-size:24px;margin:0;font-weight:800}
+h2{font-size:21px;margin:18px 0 8px;font-weight:800}
+.top{display:flex;align-items:center;justify-content:space-between;gap:10px;padding-bottom:12px;margin-bottom:16px;position:relative}
+.top:after{content:"";position:absolute;left:0;right:0;bottom:0;height:5px;border-radius:5px;background:linear-gradient(90deg,var(--red),var(--gold) 50%,var(--red))}
+.sub{font-size:14px;margin-top:4px}
+label{display:block;margin:12px 0 6px;font-size:17px}
+select,input[type=password]{width:100%;padding:12px 14px;font-size:19px;font-weight:700;border:2px solid #222;border-radius:12px;background:#fff;color:#000;box-shadow:0 2px 8px rgba(0,0,0,.12)}
+select:focus,input:focus{outline:none;border-color:var(--red);box-shadow:0 0 0 4px rgba(179,18,26,.18)}
+button{padding:12px 18px;font-size:18px;font-weight:800;border:2px solid #000;border-radius:12px;background:#fff;color:#000;cursor:pointer}
+button.p{background:var(--red);border-color:var(--red);color:#fff}
+button.d{border-color:var(--red);color:var(--red)}
+button.s{padding:6px 12px;font-size:15px}
+button:disabled{opacity:.5}
+.card{border:1px solid var(--line);border-left:7px solid var(--red);border-radius:14px;padding:16px;margin:14px 0;box-shadow:0 3px 12px rgba(0,0,0,.14)}
+.err{color:var(--red);margin-top:8px}.ok{color:#0a6b1f}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:0 12px}
+@media (max-width:560px){.grid{grid-template-columns:1fr}}
+.notice{background:#fff3c4;border:2px solid #e6b800;border-radius:12px;padding:10px 12px;margin:12px 0}
+.ch{display:flex;align-items:center;gap:10px;border:1px solid var(--line);border-radius:12px;padding:10px;margin:8px 0;box-shadow:0 2px 8px rgba(0,0,0,.1)}
+.ch .no{background:var(--red);color:#fff;border-radius:8px;padding:2px 10px;font-size:18px;flex:none}
+.ch .in{flex:1;min-width:0}.ch .nm{font-size:17px;line-height:1.3;word-break:break-word}.ch .sc{font-size:13px;margin-top:2px}
+.ch select{width:190px;flex:none;padding:10px;font-size:17px}
+.ch.v1{background:#fff2b8}.ch.v2{background:#e6e6e6}.ch.v3{background:#ffd9bd}.ch.vP{background:#e3f2ff}
+.ch.dup{border:3px solid var(--red)}
+@media (max-width:520px){.ch{flex-wrap:wrap}.ch select{width:100%}}
+.bar{position:sticky;bottom:0;background:#fff;padding:10px 0;border-top:3px solid var(--gold);margin-top:14px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+table{border-collapse:collapse;width:100%;font-size:15px}
+th,td{border:1px solid #bbb;padding:6px 8px;text-align:left;vertical-align:top}
+th{background:#000;color:#fff}
+.wrap{overflow-x:auto}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0 12px}
+.tabs button{padding:8px 14px;font-size:16px}.tabs button.on{background:var(--red);border-color:var(--red);color:#fff}
+.st-ok{background:#d9f2dd}.st-no{background:#ffe0e0}
+details{margin:8px 0}summary{cursor:pointer;font-size:18px}
+.pill{display:inline-block;background:#000;color:#fff;border-radius:10px;padding:2px 12px;margin:6px 0}
+</style></head><body>
+
+<div class="top"><div><h1>ප්‍රතිඵල ඇතුළත් කිරීම</h1><div class="sub">ඌව පළාත් විශේෂ අධ්‍යාපන ක්‍රීඩා උත්සවය 2026 <span id="role"></span></div></div><button class="s" id="out" hidden>ඉවත් වන්න</button></div>
+
+<div id="login" class="card">
+  <h2 style="margin-top:0">පිවිසුම</h2>
+  <label for="pin">PIN අංකය</label>
+  <input id="pin" type="password" autocomplete="off" placeholder="PIN අංකය ඇතුළත් කරන්න">
+  <div style="margin-top:12px"><button class="p" id="go">පිවිසෙන්න</button></div>
+  <div class="err" id="lerr"></div>
+</div>
+
+<div id="app" hidden>
+  <div class="tabs" id="tabs" hidden>
+    <button class="on" data-tab="entry">ඇතුළත් කිරීම / සංස්කරණය</button>
+    <button data-tab="list">ප්‍රතිඵල ලැයිස්තුව</button>
+    <button data-tab="prog">ඉසව් තත්වය</button>
+    <button data-tab="sum">සාරාංශය</button>
+  </div>
+
+  <div id="p-entry">
+    <div class="grid">
+      <div><label for="age">වයස් කාණ්ඩය</label><select id="age"></select></div>
+      <div><label for="typ">තත්වය</label><select id="typ"></select></div>
+      <div><label for="evt">ඉසව්ව</label><select id="evt"></select></div>
+      <div><label for="gen">බාලක / බාලිකා</label><select id="gen"></select></div>
+    </div>
+    <div id="info" class="sub" style="margin-top:10px"></div>
+    <div id="list"></div>
+    <div class="bar" id="bar" hidden>
+      <button class="p" id="save">සුරකින්න</button>
+      <button class="d" id="del" hidden>ප්‍රතිඵල මකන්න</button>
+      <span id="msg"></span>
+    </div>
+  </div>
+
+  <div id="p-list" hidden>
+    <div class="grid">
+      <div><label for="fa">වයස් කාණ්ඩය</label><select id="fa"></select></div>
+      <div><label for="ft">තත්වය (රෝග කාණ්ඩය)</label><select id="ft"></select></div>
+      <div><label for="fe">ඉසව්ව</label><select id="fe"></select></div>
+      <div><label for="fg">බාලක / බාලිකා</label><select id="fg"></select></div>
+      <div><label for="fp">ස්ථානය</label><select id="fp"></select></div>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;align-items:center">
+      <button class="s" id="refresh">යාවත්කාලීන කරන්න</button>
+      <button class="s p" id="csv">මෙම ලැයිස්තුව Excel (CSV) ලෙස බාගන්න</button>
+      <span class="sub" id="stamp"></span>
+    </div>
+    <div id="lres"></div>
+  </div>
+  <div id="p-prog" hidden></div>
+  <div id="p-sum" hidden></div>
+</div>
+
+<script>
+const $ = (id) => document.getElementById(id);
+const PIN_KEY = "sr_pin";
+const getPin = () => sessionStorage.getItem(PIN_KEY) || "";
+const setPin = (p) => sessionStorage.setItem(PIN_KEY, p);
+const clearPin = () => sessionStorage.removeItem(PIN_KEY);
+async function api(path, opts = {}) {
+  const r = await fetch("/api/" + path, { ...opts, headers: { "x-pin": getPin(), "content-type": "application/json", ...(opts.headers || {}) } });
+  let j = null; try { j = await r.json(); } catch (e) {}
+  if (!r.ok) { const err = new Error((j && j.error) || "දෝෂයකි (" + r.status + ")"); err.status = r.status; throw err; }
+  return j;
+}
+const esc = (s) => String(s == null ? "" : s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const TYPE_ORDER = ["බුද්ධිමය", "ඔටිසම්", "ඩවුන්", "ශ්‍රවණ", "දෘෂ්ටි", "අල්ප", "පූර්ණ", "කායික"];
+const EV_ORDER = ["දණ්ඩ", "සමබර", "හිසට", "ටෙනිස්", "කැට", "වළල්ල", "හිටි", "නිශ්චල", "දුර", "උස", "යගුලිය", "කවපෙත්ත", "හෙල්ල"];
+const typeRank = (t) => { const i = TYPE_ORDER.findIndex((p) => t.startsWith(p)); return i < 0 ? 99 : i; };
+const evRank = (e) => { const m = /^(\d+) M/.exec(e); if (m) return [0, +m[1]]; const i = EV_ORDER.findIndex((p) => e.startsWith(p)); return [1, i < 0 ? 99 : i]; };
+const typeSort = (a, b) => typeRank(a) - typeRank(b) || a.localeCompare(b);
+const evSort = (a, b) => { const x = evRank(a), y = evRank(b); return x[0] - y[0] || x[1] - y[1] || a.localeCompare(b); };
+const gRank = (g) => (g === "බාලක" ? 0 : 1);
+const OPTS = [["1", "1 වන ස්ථානය"], ["2", "2 වන ස්ථානය"], ["3", "3 වන ස්ථානය"], ["P", "සහභාගී වී ඇත"], ["NP", "සහභාගී වී නැත"]];
+const valText = (v) => { const o = OPTS.find((x) => x[0] === v); return o ? o[1] : "සහභාගී වී නැත"; };
+const pRank = (v) => ({ "1": 1, "2": 2, "3": 3, P: 4 }[v] || 5);
+const nowText = (iso) => (iso ? new Date(iso).toLocaleString("en-GB") : "");
+const uniq = (a) => [...new Set(a)];
+function fill(sel, items, label) { sel.innerHTML = items.map((x) => `<option value="${esc(x[0] !== undefined && Array.isArray(x) ? x[0] : x)}">${esc(label ? label(x) : x)}</option>`).join(""); }
+
+let ROLE = "", CH = [], BY = {}, ALLMAP = {}, cur = null, dirty = false, saving = false;
+
+// වයස -> තත්වය -> ඉසව්ව -> ළමයින් (ඇතුළත් කිරීමේ පිටුව සඳහා)
+function kidsOf(a, t, e, g) { return CH.filter((c) => String(c.a) === String(a) && c.t === t && c.e.includes(e) && (!g || c.g === g)); }
+const agesAll = () => uniq(CH.map((c) => c.a)).sort((x, y) => x - y);
+const typesOf = (a) => uniq(CH.filter((c) => !a || String(c.a) === String(a)).map((c) => c.t)).sort(typeSort);
+const eventsOf = (a, t) => uniq(CH.filter((c) => (!a || String(c.a) === String(a)) && (!t || c.t === t)).flatMap((c) => c.e)).sort(evSort);
+const gendersOf = (a, t, e) => uniq(kidsOf(a, t, e).map((c) => c.g)).sort((x, y) => gRank(x) - gRank(y));
+const confirmLeave = () => !dirty || confirm("සුරකින්නේ නැති වෙනස්කම් ඇත. සුරකින්නේ නැතිව ඉදිරියට යනවාද?");
+
+async function login() {
+  $("lerr").textContent = ""; setPin($("pin").value.trim());
+  try { const r = await api("login"); await start(r); }
+  catch (e) { clearPin(); $("lerr").textContent = e.message; }
+}
+async function start(r) {
+  ROLE = r.role;
+  CH = await api("data"); CH.forEach((c) => (BY[c.n] = c));
+  $("login").hidden = true; $("app").hidden = false; $("out").hidden = false;
+  $("role").textContent = "· " + (ROLE === "admin" ? "ඇඩ්මින්" : "විනිසුරු");
+  $("tabs").hidden = ROLE !== "admin";
+  fill($("age"), agesAll().map(String), (a) => a + " පහළ");
+  onAge();
+  if (ROLE === "admin") initFilters();
+}
+function onAge() { fill($("typ"), typesOf($("age").value)); onType(); }
+function onType() { fill($("evt"), eventsOf($("age").value, $("typ").value)); onEvt(); }
+function onEvt() { fill($("gen"), gendersOf($("age").value, $("typ").value, $("evt").value)); loadEntry(); }
+
+async function loadEntry() {
+  const a = $("age").value, t = $("typ").value, e = $("evt").value, g = $("gen").value;
+  cur = { a, t, e, g }; dirty = false; $("msg").textContent = "";
+  const kids = kidsOf(a, t, e, g).sort((x, y) => x.n - y.n);
+  $("list").innerHTML = '<div class="sub">පූරණය වෙමින්...</div>'; $("bar").hidden = true; $("info").textContent = "";
+  let doc;
+  try { doc = await api("event?" + new URLSearchParams({ age: a, type: t, event: e, gender: g })); }
+  catch (err) { $("list").innerHTML = `<div class="err">${esc(err.message)}</div>`; return; }
+  if (!cur || cur.a !== a || cur.t !== t || cur.e !== e || cur.g !== g) return;
+  const entries = doc.entries || {};
+  const dis = doc.locked ? " disabled" : "";
+  $("list").innerHTML = (doc.locked ? '<div class="notice">මෙම ඉසව්වේ ප්‍රතිඵල දැනටමත් සුරකා ඇත. වෙනස් කිරීමට ඇඩ්මින්ට පමණක් හැකිය.</div>' : "") +
+    kids.map((c) => {
+      const v = entries[c.n] || "NP";
+      return `<div class="ch" data-n="${c.n}"><div class="no">${c.n}</div><div class="in"><div class="nm">${esc(c.nm)}</div><div class="sc">${esc(c.s)} · ${esc(c.z)}</div></div>
+        <select data-n="${c.n}"${dis}>${OPTS.map((o) => `<option value="${o[0]}"${o[0] === v ? " selected" : ""}>${o[1]}</option>`).join("")}</select></div>`;
+    }).join("");
+  $("info").textContent = doc.updatedAt ? "සුරැකුවේ: " + nowText(doc.updatedAt) : "තවම සුරකලා නැත";
+  $("bar").hidden = !kids.length;
+  $("save").hidden = !!doc.locked;
+  $("del").hidden = !(ROLE === "admin" && (doc.updatedAt || kids.some((c) => entries[c.n])));
+  paint();
+}
+function paint() {
+  const counts = {};
+  document.querySelectorAll("#list .ch").forEach((row) => {
+    const v = row.querySelector("select").value;
+    row.className = "ch" + (v === "NP" ? "" : " v" + v);
+    if (["1", "2", "3"].includes(v)) counts[v] = (counts[v] || 0) + 1;
+  });
+  let dup = false;
+  document.querySelectorAll("#list .ch").forEach((row) => {
+    const v = row.querySelector("select").value;
+    if (["1", "2", "3"].includes(v) && counts[v] > 1) { row.classList.add("dup"); dup = true; }
+  });
+  return dup;
+}
+async function save() {
+  if (saving || !cur) return;
+  if (paint() && !confirm("එකම ස්ථානය එකකට වඩා ළමයින්ට දී ඇත (රතු පාට කොටු). එසේම සුරකින්නද?")) return;
+  const entries = {};
+  document.querySelectorAll("#list select").forEach((s) => { entries[s.dataset.n] = s.value === "NP" ? null : s.value; });
+  saving = true; $("save").disabled = true; $("msg").className = ""; $("msg").textContent = "සුරකිමින්...";
+  try {
+    await api("event", { method: "PUT", body: JSON.stringify({ age: cur.a, type: cur.t, event: cur.e, gender: cur.g, entries }) });
+    dirty = false; await loadEntry(); $("msg").className = "ok"; $("msg").textContent = "සුරැකුවා ✓";
+  } catch (e) { $("msg").className = "err"; $("msg").textContent = e.message; }
+  saving = false; $("save").disabled = false;
+}
+async function del() {
+  if (!cur || !confirm(`${cur.a} පහළ · ${cur.t} · ${cur.e} · ${cur.g} සඳහා සියලු ප්‍රතිඵල මකන්නද?`)) return;
+  try {
+    await api("event?" + new URLSearchParams({ age: cur.a, type: cur.t, event: cur.e, gender: cur.g }), { method: "DELETE" });
+    dirty = false; await loadEntry(); $("msg").className = "ok"; $("msg").textContent = "මැකුවා ✓";
+  } catch (e) { $("msg").className = "err"; $("msg").textContent = e.message; }
+}
+
+// ---------- ඇඩ්මින් කොටස ----------
+async function refreshAll() {
+  const arr = await api("all"); ALLMAP = {};
+  arr.forEach((d) => { ALLMAP[d.label.age + "|" + d.label.type + "|" + d.label.event] = d; });
+  $("stamp").textContent = "යාවත්කාලීන වූයේ: " + new Date().toLocaleTimeString("en-GB");
+}
+const valueOf = (c, e) => { const d = ALLMAP[c.a + "|" + c.t + "|" + e]; return d && d.entries ? d.entries[c.n] : undefined; };
+function initFilters() {
+  fill($("fa"), [["", "සියල්ල"], ...agesAll().map((a) => [String(a), a + " පහළ"])].map((x) => x), (x) => x[1]);
+  fill($("fg"), [["", "සියල්ල"], ["බාලක", "බාලක"], ["බාලිකා", "බාලිකා"]], (x) => x[1]);
+  fill($("fp"), [["rec", "ලැබූ ප්‍රතිඵල සියල්ල"], ["1", "1 වන ස්ථානය"], ["2", "2 වන ස්ථානය"], ["3", "3 වන ස්ථානය"], ["P", "සහභාගී වී ඇත"], ["NP", "සහභාගී වී නැත"], ["all", "සියල්ල"]], (x) => x[1]);
+  onFa();
+}
+function onFa() { fill($("ft"), [["", "සියල්ල"], ...typesOf($("fa").value).map((t) => [t, t])], (x) => x[1]); onFt(); }
+function onFt() { fill($("fe"), [["", "සියල්ල"], ...eventsOf($("fa").value, $("ft").value).map((e) => [e, e])], (x) => x[1]); renderList(); }
+function listRows() {
+  const a = $("fa").value, t = $("ft").value, e = $("fe").value, g = $("fg").value, p = $("fp").value;
+  const rows = [];
+  for (const c of CH) {
+    if (a && String(c.a) !== a) continue; if (t && c.t !== t) continue; if (g && c.g !== g) continue;
+    for (const ev of c.e) {
+      if (e && ev !== e) continue;
+      const v = valueOf(c, ev);
+      if (p === "rec" && !v) continue;
+      if (p === "NP" && v) continue;
+      if (["1", "2", "3", "P"].includes(p) && v !== p) continue;
+      rows.push({ c, ev, v });
+    }
+  }
+  rows.sort((x, y) => x.c.a - y.c.a || typeRank(x.c.t) - typeRank(y.c.t) || x.c.t.localeCompare(y.c.t) || evSort(x.ev, y.ev) || gRank(x.c.g) - gRank(y.c.g) || pRank(x.v) - pRank(y.v) || x.c.n - y.c.n);
+  return rows;
+}
+function renderList() {
+  const rows = listRows();
+  $("lres").innerHTML = `<div class="pill">ප්‍රතිඵල ${rows.length}</div><div class="wrap"><table><tr><th>වයස</th><th>තත්වය</th><th>ඉසව්ව</th><th>බා/බාලි</th><th>ස්ථානය</th><th>අංකය</th><th>නම</th><th>පාසල</th><th>කලාපය</th></tr>` +
+    (rows.map(({ c, ev, v }) => `<tr><td>${c.a} පහළ</td><td>${esc(c.t)}</td><td>${esc(ev)}</td><td>${esc(c.g)}</td><td><b>${esc(valText(v))}</b></td><td>${c.n}</td><td>${esc(c.nm)}</td><td>${esc(c.s)}</td><td>${esc(c.z)}</td></tr>`).join("") || '<tr><td colspan="9">ප්‍රතිඵල නැත</td></tr>') + "</table></div>";
+}
+function renderProg() {
+  let html = "";
+  for (const a of agesAll()) {
+    let tot = 0, done = 0, body = "";
+    for (const t of typesOf(a)) for (const e of eventsOf(a, t).filter((ev) => kidsOf(a, t, ev).length)) {
+      const d = ALLMAP[a + "|" + t + "|" + e];
+      for (const g of gendersOf(a, t, e)) {
+        tot++; const kids = kidsOf(a, t, e, g); const sv = d && d.saved && d.saved[g];
+        if (sv) done++;
+        const given = d ? kids.filter((c) => ["1", "2", "3"].includes((d.entries || {})[c.n])).length : 0;
+        body += `<tr class="${sv ? "st-ok" : "st-no"}"><td>${esc(t)}</td><td>${esc(e)}</td><td>${esc(g)}</td><td>${kids.length}</td><td>${sv ? "ඇතුළත් කර ඇත" : "තවම නැත"}</td><td>${given}</td><td>${esc(nowText(sv))}</td><td><button class="s" data-open="${esc(JSON.stringify([a, t, e, g]))}">සංස්කරණය</button></td></tr>`;
+      }
+    }
+    html += `<details><summary>${a} පහළ — ${done} / ${tot} ඇතුළත් කර ඇත</summary><div class="wrap"><table><tr><th>තත්වය</th><th>ඉසව්ව</th><th>බා/බාලි</th><th>ළමයින්</th><th>තත්වය</th><th>1/2/3 ගණන</th><th>සුරැකුවේ</th><th></th></tr>${body}</table></div></details>`;
+  }
+  $("p-prog").innerHTML = html;
+}
+function renderSum() {
+  const S = {}, Z = {}, add = (o, k, p) => { (o[k] || (o[k] = [0, 0, 0]))[p - 1]++; };
+  for (const d of Object.values(ALLMAP)) for (const [reg, v] of Object.entries(d.entries || {})) {
+    if (!["1", "2", "3"].includes(v)) continue; const c = BY[reg]; if (!c) continue; add(S, c.s, +v); add(Z, c.z, +v);
+  }
+  const tbl = (title, head, o) => { const rows = Object.entries(o).sort((x, y) => y[1][0] - x[1][0] || y[1][1] - x[1][1] || y[1][2] - x[1][2]);
+    return `<h2>${title}</h2><div class="wrap"><table><tr><th>${head}</th><th>1</th><th>2</th><th>3</th><th>එකතුව</th></tr>` + (rows.map(([k, v]) => `<tr><td>${esc(k)}</td><td>${v[0]}</td><td>${v[1]}</td><td>${v[2]}</td><td><b>${v[0] + v[1] + v[2]}</b></td></tr>`).join("") || '<tr><td colspan="5">තවම ප්‍රතිඵල නැත</td></tr>') + "</table></div>"; };
+  $("p-sum").innerHTML = tbl("පාසල් අනුව ස්ථාන", "පාසල", S) + tbl("කලාප අනුව ස්ථාන", "කලාපය", Z);
+}
+const csvCell = (x) => { x = String(x == null ? "" : x); return /[",\n]/.test(x) ? '"' + x.replace(/"/g, '""') + '"' : x; };
+function exportCsv() {
+  const head = ["ලියාපදිංචි අංකය", "නම", "පාසල", "කලාපය", "වයස් කාණ්ඩය", "බාලක/බාලිකා", "තත්වය", "ඉසව්ව", "ප්‍රතිඵලය"];
+  const rows = listRows().map(({ c, ev, v }) => [c.n, c.nm, c.s, c.z, c.a + " පහළ", c.g, c.t, ev, valText(v)]);
+  const blob = new Blob(["\ufeff" + [head, ...rows].map((r) => r.map(csvCell).join(",")).join("\r\n")], { type: "text/csv;charset=utf-8" });
+  const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = "results.csv"; document.body.appendChild(a); a.click(); a.remove();
+}
+async function showTab(tab) {
+  if (tab !== "entry" && !confirmLeave()) return;
+  document.querySelectorAll("#tabs button").forEach((b) => b.classList.toggle("on", b.dataset.tab === tab));
+  ["entry", "list", "prog", "sum"].forEach((t) => ($("p-" + t).hidden = t !== tab));
+  if (tab === "entry") return;
+  try { await refreshAll(); } catch (e) { alert(e.message); return; }
+  if (tab === "list") renderList(); if (tab === "prog") renderProg(); if (tab === "sum") renderSum();
+}
+function openEntry([a, t, e, g]) {
+  showTab("entry").then(() => {
+    $("age").value = a; fill($("typ"), typesOf(a)); $("typ").value = t; fill($("evt"), eventsOf(a, t)); $("evt").value = e;
+    fill($("gen"), gendersOf(a, t, e)); $("gen").value = g; loadEntry();
+  });
+}
+
+// ---------- සිදුවීම් ----------
+$("go").onclick = login;
+$("pin").addEventListener("keydown", (e) => { if (e.key === "Enter") login(); });
+$("out").onclick = () => { if (!confirmLeave()) return; clearPin(); location.reload(); };
+let prev = {};
+["age", "typ", "evt", "gen"].forEach((id) => $(id).addEventListener("focus", () => { prev[id] = $(id).value; }));
+const guard = (id, fn) => $(id).addEventListener("change", () => { if (!confirmLeave()) { $(id).value = prev[id]; return; } fn(); });
+guard("age", onAge); guard("typ", onType); guard("evt", onEvt); guard("gen", loadEntry);
+$("list").addEventListener("change", (e) => { if (e.target.matches("select")) { dirty = true; $("msg").textContent = ""; paint(); } });
+$("save").onclick = save; $("del").onclick = del;
+$("tabs").addEventListener("click", (e) => { const b = e.target.closest("button"); if (b) showTab(b.dataset.tab); });
+$("p-prog").addEventListener("click", (e) => { const b = e.target.closest("button[data-open]"); if (b) openEntry(JSON.parse(b.dataset.open)); });
+$("fa").onchange = onFa; $("ft").onchange = onFt; ["fe", "fg", "fp"].forEach((id) => ($(id).onchange = renderList));
+$("refresh").onclick = async () => { try { await refreshAll(); renderList(); } catch (e) { alert(e.message); } };
+$("csv").onclick = exportCsv;
+window.addEventListener("beforeunload", (e) => { if (dirty) { e.preventDefault(); e.returnValue = ""; } });
+if (getPin()) api("login").then(start).catch(() => clearPin());
+</script>
+</body></html>
